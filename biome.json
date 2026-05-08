@@ -38,7 +38,6 @@
         "noReExportAll": "error"
       },
       "style": {
-        "noDefaultExport": "error",
         "noNestedTernary": "error",
         "noParameterAssign": "error",
         "noRestrictedImports": {
