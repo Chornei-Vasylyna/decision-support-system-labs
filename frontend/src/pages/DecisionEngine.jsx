@@ -1,3 +1,3 @@
 export const DecisionEngine = () => {
-    return <div>DecisionEngine</div>
-}
+  return <div>DecisionEngine</div>;
+};

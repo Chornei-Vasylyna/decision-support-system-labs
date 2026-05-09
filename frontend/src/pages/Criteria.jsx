@@ -1,3 +1,3 @@
 export const Criteria = () => {
-    return <div>Criteria</div>
-}
+  return <div>Criteria</div>;
+};

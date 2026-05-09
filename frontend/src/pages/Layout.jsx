@@ -4,11 +4,14 @@ import { Tab } from "@/shared/ui/Tab";
 export const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-stone-100">
-
       <header className="bg-stone-400/60 border-b border-stone-400/40 px-8 py-4">
         <div>
-          <h1 className="text-lg font-semibold text-stone-800 tracking-tight">СППР</h1>
-          <p className="text-sm text-stone-600 mt-0.5">Decision Support System</p>
+          <h1 className="text-lg font-semibold text-stone-800 tracking-tight">
+            СППР
+          </h1>
+          <p className="text-sm text-stone-600 mt-0.5">
+            Decision Support System
+          </p>
         </div>
       </header>
 

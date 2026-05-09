@@ -77,12 +77,12 @@ export const AlternativesPage = () => {
             </tr>
           </thead>
           <tbody>
-            {alternatives.map((a) => (
+            {alternatives.map((a, index) => (
               <tr
                 key={a.id}
                 className="border-t border-stone-200 hover:bg-stone-100/60 transition-colors"
               >
-                <td className="p-3 text-sm text-stone-600">{a.id}</td>
+                <td className="p-3 text-sm text-stone-600">{index + 1}</td>
                 <td className="p-3 text-sm font-medium text-stone-800">
                   {a.name}
                 </td>

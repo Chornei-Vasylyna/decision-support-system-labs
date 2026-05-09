@@ -1,3 +1,3 @@
 export const Matrix = () => {
-    return <div>Matrix</div>
-}
+  return <div>Matrix</div>;
+};

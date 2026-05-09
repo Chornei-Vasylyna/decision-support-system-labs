@@ -1,3 +1,3 @@
 export const Constraints = () => {
-    return <div>Constraints</div>
-}
+  return <div>Constraints</div>;
+};
