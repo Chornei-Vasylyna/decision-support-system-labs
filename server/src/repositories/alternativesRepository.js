@@ -2,9 +2,7 @@ import { db } from "../db/mysql.js";
 
 export const alternativesRepository = {
   getAll: async () => {
-    const [rows] = await db.query(
-      "SELECT * FROM alternatives ORDER BY id",
-    );
+    const [rows] = await db.query("SELECT * FROM alternatives ORDER BY id");
 
     return rows;
   },
