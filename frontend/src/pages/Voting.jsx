@@ -1,3 +1,3 @@
-export const Voting = () => {
+export const VotingPage = () => {
   return <div>Voting</div>;
 };

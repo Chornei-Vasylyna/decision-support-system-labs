@@ -1,3 +1,3 @@
-export const Rules = () => {
+export const RulesPage = () => {
   return <div>Rules</div>;
 };

@@ -1,3 +1,3 @@
-export const DecisionEngine = () => {
+export const DecisionEnginePage = () => {
   return <div>DecisionEngine</div>;
 };

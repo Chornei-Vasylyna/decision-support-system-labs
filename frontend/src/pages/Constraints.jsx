@@ -1,3 +1,3 @@
-export const Constraints = () => {
+export const ConstraintsPage = () => {
   return <div>Constraints</div>;
 };

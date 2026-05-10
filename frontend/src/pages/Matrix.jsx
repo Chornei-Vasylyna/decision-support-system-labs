@@ -1,3 +1,3 @@
-export const Matrix = () => {
+export const MatrixPage = () => {
   return <div>Matrix</div>;
 };

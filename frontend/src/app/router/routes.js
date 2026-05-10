@@ -1,13 +1,13 @@
-import { Alternatives } from "@/pages/Alternatives";
-import { Analysis } from "@/pages/Analysis";
-import { Constraints } from "@/pages/Constraints";
-import { Criteria } from "@/pages/Criteria";
-import { DecisionEngine } from "@/pages/DecisionEngine";
-import { Explanation } from "@/pages/Explanation";
+import { AlternativesPage } from "@/pages/Alternatives";
+import { AnalysisPage } from "@/pages/Analysis";
+import { ConstraintsPage } from "@/pages/Constraints";
+import { CriteriaPage } from "@/pages/Criteria";
+import { DecisionEnginePage } from "@/pages/DecisionEngine";
+import { ExplanationPage } from "@/pages/Explanation";
 import { Layout } from "@/pages/Layout";
-import { Matrix } from "@/pages/Matrix";
-import { Rules } from "@/pages/Rules";
-import { Voting } from "@/pages/Voting";
+import { MatrixPage } from "@/pages/Matrix";
+import { RulesPage } from "@/pages/Rules";
+import { VotingPage } from "@/pages/Voting";
 
 export const routes = [
   {
@@ -16,39 +16,39 @@ export const routes = [
     children: [
       {
         index: true,
-        Component: Alternatives,
+        Component: AlternativesPage,
       },
       {
         path: "criteria",
-        Component: Criteria,
+        Component: CriteriaPage,
       },
       {
         path: "matrix",
-        Component: Matrix,
+        Component: MatrixPage,
       },
       {
         path: "voting",
-        Component: Voting,
+        Component: VotingPage,
       },
       {
         path: "engine",
-        Component: DecisionEngine,
+        Component: DecisionEnginePage,
       },
       {
         path: "constraints",
-        Component: Constraints,
+        Component: ConstraintsPage,
       },
       {
         path: "rules",
-        Component: Rules,
+        Component: RulesPage,
       },
       {
         path: "analysis",
-        Component: Analysis,
+        Component: AnalysisPage,
       },
       {
         path: "explanation",
-        Component: Explanation,
+        Component: ExplanationPage,
       },
     ],
   },

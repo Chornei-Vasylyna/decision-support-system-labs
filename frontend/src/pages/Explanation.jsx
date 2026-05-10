@@ -1,3 +1,3 @@
-export const Explanation = () => {
+export const ExplanationPage = () => {
   return <div>Explanation</div>;
 };
