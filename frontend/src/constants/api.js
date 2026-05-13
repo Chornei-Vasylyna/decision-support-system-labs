@@ -5,4 +5,9 @@ export const API_ENDPOINTS = {
 	evaluationsImport: `${API_BASE_URL}/evaluations/import-google`,
 	evaluationsMatrix: `${API_BASE_URL}/evaluations/matrix`,
 	criteria: `${API_BASE_URL}/criteria`,
+	voting: `${API_BASE_URL}/voting`,
+	votingImport: `${API_BASE_URL}/voting/import-google`,
+	votingMethods: `${API_BASE_URL}/voting/method`,
+	weights: `${API_BASE_URL}/weights`,
+	weightsApplyVoting: `${API_BASE_URL}/weights/apply-voting`,
 };
