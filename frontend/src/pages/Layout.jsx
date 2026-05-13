@@ -17,7 +17,7 @@ export const Layout = () => {
 
 			<nav className="bg-stone-200/70 border-b border-stone-300/60 px-8">
 				<div className="max-w-6xl mx-auto flex overflow-x-auto gap-2">
-					<Tab to="/" label="Альтернативи" />
+					<Tab to="/alternatives" label="Альтернативи" />
 					<Tab to="/criteria" label="Критерії" />
 					<Tab to="/matrix" label="Матриця" />
 					<Tab to="/voting" label="Голосування" />
