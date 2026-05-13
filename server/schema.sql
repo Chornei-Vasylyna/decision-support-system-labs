@@ -25,3 +25,14 @@ CREATE TABLE IF NOT EXISTS evaluations (
 		FOREIGN KEY (criterion_id) REFERENCES criteria(id)
 		ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS votes (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	voter_id INT NOT NULL,
+	criterion_id INT NOT NULL,
+	rank INT NOT NULL,
+	UNIQUE KEY unique_vote (voter_id, criterion_id),
+	CONSTRAINT fk_votes_criterion
+		FOREIGN KEY (criterion_id) REFERENCES criteria(id)
+		ON DELETE CASCADE
+);
