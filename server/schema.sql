@@ -36,3 +36,11 @@ CREATE TABLE IF NOT EXISTS votes (
 		FOREIGN KEY (criterion_id) REFERENCES criteria(id)
 		ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS thresholds (
+	criterion_id INT PRIMARY KEY,
+	threshold_value DECIMAL(12,6) NOT NULL,
+	CONSTRAINT fk_thresholds_criterion
+		FOREIGN KEY (criterion_id) REFERENCES criteria(id)
+		ON DELETE CASCADE
+);
