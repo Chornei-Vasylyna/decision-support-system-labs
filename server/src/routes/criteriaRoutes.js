@@ -1,7 +1,6 @@
 import { Router } from "express";
 
-import { criteriaController }
-from "../controllers/criteriaController.js";
+import { criteriaController } from "../controllers/criteriaController.js";
 
 const router = Router();
 

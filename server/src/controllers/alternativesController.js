@@ -7,12 +7,10 @@ export const alternativesController = {
 
 			res.json(data);
 		} catch (error) {
-			res
-				.status(500)
-				.json({
-					message: "Failed to fetch alternatives",
-					error: error.message,
-				});
+			res.status(500).json({
+				message: "Failed to fetch alternatives",
+				error: error.message,
+			});
 		}
 	},
 
@@ -24,9 +22,25 @@ export const alternativesController = {
 
 			res.status(201).json(data);
 		} catch (error) {
-			res.status(400).json({
-				message: error.message,
-			});
+			res.status(400).json({ message: error.message });
+		}
+	},
+
+	update: async (req, res) => {
+		try {
+			const { name, description } = req.body;
+
+			const data = await alternativesService.update(
+				req.params.id,
+				name,
+				description,
+			);
+
+			res.json(data);
+		} catch (error) {
+			const status = error.message === "Alternative not found" ? 404 : 400;
+
+			res.status(status).json({ message: error.message });
 		}
 	},
 
@@ -36,12 +50,10 @@ export const alternativesController = {
 
 			res.sendStatus(204);
 		} catch (error) {
-			res
-				.status(500)
-				.json({
-					message: "Failed to remove alternative",
-					error: error.message,
-				});
+			res.status(500).json({
+				message: "Failed to remove alternative",
+				error: error.message,
+			});
 		}
 	},
 };

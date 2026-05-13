@@ -2,26 +2,48 @@ import { criteriaService } from "../services/criteriaService.js";
 
 export const criteriaController = {
 	getAll: async (_, res) => {
-		const data = await criteriaService.getAll();
+		try {
+			const data = await criteriaService.getAll();
 
-		res.json(data);
+			res.json(data);
+		} catch (error) {
+			res
+				.status(500)
+				.json({ message: "Failed to fetch criteria", error: error.message });
+		}
 	},
 
 	create: async (req, res) => {
-		const data = await criteriaService.create(req.body);
+		try {
+			const data = await criteriaService.create(req.body);
 
-		res.status(201).json(data);
+			res.status(201).json(data);
+		} catch (error) {
+			res.status(400).json({ message: error.message });
+		}
 	},
 
 	update: async (req, res) => {
-		await criteriaService.update(req.params.id, req.body);
+		try {
+			const data = await criteriaService.update(req.params.id, req.body);
 
-		res.sendStatus(200);
+			res.json(data);
+		} catch (error) {
+			const status = error.message === "Criterion not found" ? 404 : 400;
+
+			res.status(status).json({ message: error.message });
+		}
 	},
 
 	remove: async (req, res) => {
-		await criteriaService.remove(req.params.id);
+		try {
+			await criteriaService.remove(req.params.id);
 
-		res.sendStatus(204);
+			res.sendStatus(204);
+		} catch (error) {
+			res
+				.status(500)
+				.json({ message: "Failed to remove criterion", error: error.message });
+		}
 	},
 };

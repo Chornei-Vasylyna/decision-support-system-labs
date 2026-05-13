@@ -2,7 +2,7 @@ import { db } from "../db/mysql.js";
 
 export const criteriaRepository = {
 	getAll: async () => {
-		const [rows] = await db.query("SELECT * FROM criteria");
+		const [rows] = await db.query("SELECT * FROM criteria ORDER BY id");
 		return rows;
 	},
 
@@ -21,15 +21,17 @@ export const criteriaRepository = {
 	},
 
 	update: async (id, data) => {
-		await db.query(
+		const [result] = await db.query(
 			`UPDATE criteria
-       SET name=?, type=?, weight=?
-       WHERE id=?`,
-			[data.name, data.type, data.weight, id],
+			 SET name = ?, type = ?, weight = ?, description = ?
+			 WHERE id = ?`,
+			[data.name, data.type, data.weight, data.description, id],
 		);
+
+		return result.affectedRows;
 	},
 
 	remove: async (id) => {
-		await db.query("DELETE FROM criteria WHERE id=?", [id]);
+		await db.query("DELETE FROM criteria WHERE id = ?", [id]);
 	},
 };
