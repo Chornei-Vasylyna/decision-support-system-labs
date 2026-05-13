@@ -19,12 +19,10 @@ export const evaluationsController = {
 
 			res.json(data);
 		} catch (error) {
-			res
-				.status(500)
-				.json({
-					message: "Failed to fetch evaluation matrix",
-					error: error.message,
-				});
+			res.status(500).json({
+				message: "Failed to fetch evaluation matrix",
+				error: error.message,
+			});
 		}
 	},
 
@@ -33,6 +31,23 @@ export const evaluationsController = {
 			const data = await evaluationsService.upsertMany(req.body?.evaluations);
 
 			res.status(200).json({ updated: data.length });
+		} catch (error) {
+			res.status(400).json({ message: error.message });
+		}
+	},
+
+	importFromGoogle: async (req, res) => {
+		try {
+			const { url, spreadsheetId, gid, createMissing = true } = req.body || {};
+
+			const result = await evaluationsService.importFromGoogle({
+				url,
+				spreadsheetId,
+				gid,
+				createMissing,
+			});
+
+			res.status(200).json({ imported: result });
 		} catch (error) {
 			res.status(400).json({ message: error.message });
 		}
