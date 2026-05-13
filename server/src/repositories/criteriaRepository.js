@@ -31,6 +31,15 @@ export const criteriaRepository = {
 		return result.affectedRows;
 	},
 
+	updateWeight: async (id, weight) => {
+		const [result] = await db.query(
+			"UPDATE criteria SET weight = ? WHERE id = ?",
+			[weight, id],
+		);
+
+		return result.affectedRows;
+	},
+
 	remove: async (id) => {
 		await db.query("DELETE FROM criteria WHERE id = ?", [id]);
 	},
