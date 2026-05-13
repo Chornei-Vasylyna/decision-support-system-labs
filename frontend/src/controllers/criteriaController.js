@@ -2,6 +2,24 @@ import { criteriaApi } from "@/api/criteriaApi";
 import { useCriteriaStore } from "@/stores/useCriteriaStore";
 
 export const criteriaController = {
+	validate: (form) => {
+		const errors = {};
+
+		if (!form?.name?.trim()) {
+			errors.name = "Назва критерію обов'язкова";
+		}
+
+		if (!form?.type || !["maximize", "minimize"].includes(form.type)) {
+			errors.type = "Оберіть тип критерію";
+		}
+
+		if (form?.weight === "" || Number.isNaN(Number(form?.weight))) {
+			errors.weight = "Вага має бути числом";
+		}
+
+		return errors;
+	},
+
 	load: async () => {
 		const data = await criteriaApi.getAll();
 

@@ -6,6 +6,9 @@ export const alternativesApi = {
 
 	create: async (data) => sendJson(API_ENDPOINTS.alternatives, "POST", data),
 
+	update: async (id, data) =>
+		sendJson(`${API_ENDPOINTS.alternatives}/${id}`, "PUT", data),
+
 	remove: async (id) =>
 		sendWithoutBody(`${API_ENDPOINTS.alternatives}/${id}`, "DELETE"),
 };

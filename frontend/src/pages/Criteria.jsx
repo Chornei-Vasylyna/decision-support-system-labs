@@ -16,6 +16,7 @@ export const CriteriaPage = () => {
 		handleRemove,
 		resetForm,
 		editId,
+		errors,
 	} = useResourceList({
 		controller: criteriaController,
 		initialForm: { name: "", type: "maximize", weight: 1, description: "" },
@@ -38,26 +39,47 @@ export const CriteriaPage = () => {
 					value={form.name || ""}
 					onChange={(e) => setForm({ ...form, name: e.target.value })}
 					placeholder="Назва критерію"
-					className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2 text-stone-800 outline-none focus:border-stone-400"
+					className={`w-full border rounded-lg px-3 py-2 text-stone-800 outline-none ${
+						errors.name
+							? "border-red-400 focus:border-red-500"
+							: "border-stone-200 focus:border-stone-400"
+					}`}
 				/>
+				{errors.name && (
+					<p className="text-sm text-red-600 -mt-1">{errors.name}</p>
+				)}
 
 				<select
 					value={form.type || "maximize"}
 					onChange={(e) => setForm({ ...form, type: e.target.value })}
-					className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2"
+					className={`w-full border rounded-lg px-3 py-2 bg-white ${
+						errors.type
+							? "border-red-400 focus:border-red-500"
+							: "border-stone-200 focus:border-stone-400"
+					}`}
 				>
 					<option value="maximize">Maximize</option>
 					<option value="minimize">Minimize</option>
 				</select>
+				{errors.type && (
+					<p className="text-sm text-red-600 -mt-1">{errors.type}</p>
+				)}
 
 				<input
 					type="number"
 					step="0.1"
 					value={form.weight ?? 1}
 					onChange={(e) => setForm({ ...form, weight: e.target.value })}
-					className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2"
+					className={`w-full border rounded-lg px-3 py-2 bg-white ${
+						errors.weight
+							? "border-red-400 focus:border-red-500"
+							: "border-stone-200 focus:border-stone-400"
+					}`}
 					placeholder="Вага"
 				/>
+				{errors.weight && (
+					<p className="text-sm text-red-600 -mt-1">{errors.weight}</p>
+				)}
 
 				<textarea
 					value={form.description || ""}
