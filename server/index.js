@@ -1,17 +1,19 @@
+import "dotenv/config";
 import cors from "cors";
 import express from "express";
 
-import alternativesRoutes from "./src/routes/alternativesRoutes.js";
-import citeriaRoutes from "./src/routes/criteriaRoutes.js";
+import routes from "./src/routes/index.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/alternatives", alternativesRoutes);
-app.use("/criteria", citeriaRoutes);
+app.get("/health", (_, res) => res.json({ status: "ok" }));
 
-app.listen(3000, () => {
-	console.log("Server running");
+app.use("/api", routes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+	console.log(`Server running on port ${PORT}`);
 });
