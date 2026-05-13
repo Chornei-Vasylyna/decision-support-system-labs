@@ -44,3 +44,17 @@ CREATE TABLE IF NOT EXISTS thresholds (
 		FOREIGN KEY (criterion_id) REFERENCES criteria(id)
 		ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS rules (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	criterion_id INT NOT NULL,
+	operator ENUM('>', '>=', '<', '<=', '==', '!=') NOT NULL,
+	condition_value DECIMAL(12,6) NOT NULL,
+	action_type ENUM('adjust_percent', 'set_score', 'exclude_alternative') NOT NULL,
+	action_value DECIMAL(12,6) NOT NULL DEFAULT 0,
+	is_active TINYINT(1) NOT NULL DEFAULT 1,
+	CONSTRAINT fk_rules_criterion
+		FOREIGN KEY (criterion_id) REFERENCES criteria(id)
+		ON DELETE CASCADE
+);
