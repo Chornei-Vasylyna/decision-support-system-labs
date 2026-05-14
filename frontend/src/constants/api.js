@@ -14,4 +14,6 @@ export const API_ENDPOINTS = {
 	analysisRun: `${API_BASE_URL}/analysis/run`,
 	scenarios: `${API_BASE_URL}/scenarios`,
 	sensitivity: `${API_BASE_URL}/sensitivity`,
+	rules: `${API_BASE_URL}/rules`,
+	explanation: `${API_BASE_URL}/explanation`,
 };

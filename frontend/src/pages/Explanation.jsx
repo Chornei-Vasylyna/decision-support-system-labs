@@ -1,4 +1,24 @@
+import { useCallback, useEffect, useState } from "react";
+import { explanationController } from "@/controllers/explanationController";
+
 export const ExplanationPage = () => {
+	const [explanation, setExplanation] = useState(null);
+	const [status, setStatus] = useState("");
+
+	const load = useCallback(async () => {
+		setStatus("");
+		try {
+			const data = await explanationController.load();
+			setExplanation(data);
+		} catch (err) {
+			setStatus(err.message || "Не вдалося завантажити пояснення");
+		}
+	}, []);
+
+	useEffect(() => {
+		load();
+	}, [load]);
+
 	return (
 		<div className="space-y-6">
 			<div>
@@ -6,37 +26,30 @@ export const ExplanationPage = () => {
 					Пояснення рішення
 				</h1>
 				<p className="text-sm text-stone-600 mt-0.5">
-					Причини вибору альтернативи та вплив критеріїв
+					Пояснення вибору альтернативи та вплив критеріїв
 				</p>
 			</div>
 
-			<section className="bg-white border border-stone-200 rounded-xl p-4">
-				<h2 className="text-base font-medium text-stone-800">
-					Обрана альтернатива
-				</h2>
-				<p className="text-sm text-stone-600 mt-1">
-					Тут буде показано найкращу альтернативу та її бал.
-				</p>
-			</section>
+			{status && (
+				<div className="rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700">
+					{status}
+				</div>
+			)}
 
-			<section className="grid md:grid-cols-2 gap-4">
-				<div className="bg-white border border-stone-200 rounded-xl p-4">
+			{explanation ? (
+				<section className="bg-white border border-stone-200 rounded-xl p-4 space-y-3">
 					<h2 className="text-base font-medium text-stone-800">
-						Найвпливовіші критерії
+						Коротке резюме
 					</h2>
-					<p className="text-sm text-stone-600 mt-1">
-						Топ критеріїв за внеском у фінальний результат.
-					</p>
-				</div>
-				<div className="bg-white border border-stone-200 rounded-xl p-4">
-					<h2 className="text-base font-medium text-stone-800">
-						Застосовані правила
-					</h2>
-					<p className="text-sm text-stone-600 mt-1">
-						Перелік спрацьованих IF-THEN правил для обраної альтернативи.
-					</p>
-				</div>
-			</section>
+					<pre className="overflow-x-auto text-xs text-stone-700 bg-white border border-stone-200 rounded-lg p-3">
+						{JSON.stringify(explanation.summary || explanation, null, 2)}
+					</pre>
+				</section>
+			) : (
+				<section className="bg-white border border-stone-200 rounded-xl p-4">
+					<p className="text-sm text-stone-600">Пояснення наразі відсутнє.</p>
+				</section>
+			)}
 		</div>
 	);
 };
