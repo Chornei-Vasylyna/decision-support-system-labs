@@ -10,4 +10,8 @@ export const API_ENDPOINTS = {
 	votingMethods: `${API_BASE_URL}/voting/method`,
 	weights: `${API_BASE_URL}/weights`,
 	weightsApplyVoting: `${API_BASE_URL}/weights/apply-voting`,
+	analysis: `${API_BASE_URL}/analysis`,
+	analysisRun: `${API_BASE_URL}/analysis/run`,
+	scenarios: `${API_BASE_URL}/scenarios`,
+	sensitivity: `${API_BASE_URL}/sensitivity`,
 };
