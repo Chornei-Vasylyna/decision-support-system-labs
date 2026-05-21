@@ -1,5 +1,5 @@
-import { criteriaController } from "@/controllers/criteriaController";
 import useResourceList from "@/hooks/useResourceList";
+import { criteriaService } from "@/services/criteriaService";
 import { useCriteriaStore } from "@/stores/useCriteriaStore";
 import { FormPanel } from "@/ui/FormPanel";
 import { ListTable } from "@/ui/ListTable";
@@ -18,7 +18,7 @@ export const CriteriaPage = () => {
 		editId,
 		errors,
 	} = useResourceList({
-		controller: criteriaController,
+		controller: criteriaService,
 		initialForm: { name: "", type: "maximize", weight: 1, description: "" },
 	});
 
@@ -34,6 +34,7 @@ export const CriteriaPage = () => {
 			<FormPanel
 				onSubmit={handleSubmit}
 				submitLabel={editId ? "Оновити критерій" : "Додати критерій"}
+				error={errors.submit}
 			>
 				<input
 					value={form.name || ""}
@@ -100,7 +101,7 @@ export const CriteriaPage = () => {
 			</FormPanel>
 
 			<ListTable
-				headers={["#", "Назва", "Тип", "Вага", "Опис"]}
+				headers={["№", "Назва", "Тип", "Вага", "Опис"]}
 				items={criteria}
 				renderRow={(c, index) => (
 					<>

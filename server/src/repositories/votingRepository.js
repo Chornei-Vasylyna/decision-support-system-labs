@@ -7,37 +7,14 @@ export const votingRepository = {
 				v.id,
 				v.voter_id AS voterId,
 				v.criterion_id AS criterionId,
-				v.rank,
+				v.vote_rank AS \`rank\`,
 				c.name AS criterionName
 			 FROM votes v
 			 INNER JOIN criteria c ON c.id = v.criterion_id
-			 ORDER BY v.voter_id, v.rank`,
+			 ORDER BY v.voter_id, v.vote_rank`,
 		);
 
 		return rows;
-	},
-
-	getByCriterion: async (criterionId) => {
-		const [rows] = await db.query(
-			`SELECT voter_id AS voterId, criterion_id AS criterionId, rank
-			 FROM votes
-			 WHERE criterion_id = ?
-			 ORDER BY voter_id, rank`,
-			[criterionId],
-		);
-
-		return rows;
-	},
-
-	create: async (voterId, criterionId, rank) => {
-		await db.query(
-			`INSERT INTO votes (voter_id, criterion_id, rank)
-			 VALUES (?, ?, ?)
-			 ON DUPLICATE KEY UPDATE rank = VALUES(rank)`,
-			[voterId, criterionId, rank],
-		);
-
-		return { voterId, criterionId, rank };
 	},
 
 	createMany: async (items) => {
@@ -52,9 +29,9 @@ export const votingRepository = {
 		]);
 
 		await db.query(
-			`INSERT INTO votes (voter_id, criterion_id, rank)
+			`INSERT INTO votes (voter_id, criterion_id, vote_rank)
 			 VALUES ?
-			 ON DUPLICATE KEY UPDATE rank = VALUES(rank)`,
+			 ON DUPLICATE KEY UPDATE vote_rank = VALUES(vote_rank)`,
 			[values],
 		);
 

@@ -8,7 +8,7 @@ export const scenariosController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to fetch scenarios", error: error.message });
+				.json({ message: "Не вдалося отримати сценарії", error: error.message });
 		}
 	},
 
@@ -41,7 +41,7 @@ export const scenariosController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to remove scenario", error: error.message });
+				.json({ message: "Не вдалося видалити сценарій", error: error.message });
 		}
 	},
 

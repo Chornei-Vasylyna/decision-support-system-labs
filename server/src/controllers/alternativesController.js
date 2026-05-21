@@ -8,7 +8,7 @@ export const alternativesController = {
 			res.json(data);
 		} catch (error) {
 			res.status(500).json({
-				message: "Failed to fetch alternatives",
+				message: "Не вдалося отримати альтернативи",
 				error: error.message,
 			});
 		}
@@ -51,7 +51,7 @@ export const alternativesController = {
 			res.sendStatus(204);
 		} catch (error) {
 			res.status(500).json({
-				message: "Failed to remove alternative",
+				message: "Не вдалося видалити альтернативу",
 				error: error.message,
 			});
 		}

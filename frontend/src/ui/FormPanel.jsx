@@ -4,6 +4,7 @@ export const FormPanel = ({
 	submitLabel,
 	onSubmit,
 	children,
+	error,
 }) => {
 	return (
 		<form
@@ -16,6 +17,12 @@ export const FormPanel = ({
 					{description && (
 						<p className="text-sm text-stone-600 mt-0.5">{description}</p>
 					)}
+				</div>
+			)}
+
+			{error && (
+				<div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+					<p className="text-sm text-red-600">{error}</p>
 				</div>
 			)}
 

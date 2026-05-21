@@ -8,7 +8,7 @@ export const rulesController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to fetch rules", error: error.message });
+				.json({ message: "Не вдалося отримати правила", error: error.message });
 		}
 	},
 
@@ -38,7 +38,7 @@ export const rulesController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to remove rule", error: error.message });
+				.json({ message: "Не вдалося видалити правило", error: error.message });
 		}
 	},
 

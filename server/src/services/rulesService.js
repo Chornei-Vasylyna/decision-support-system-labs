@@ -38,22 +38,22 @@ const normalizeRule = (rule) => {
 	const isActive = Number(rule?.isActive ?? 1) ? 1 : 0;
 
 	if (!name) {
-		throw new Error("Rule name required");
+		throw new Error("Назва правила є обов'язковою");
 	}
 	if (!Number.isInteger(criterionId) || criterionId <= 0) {
-		throw new Error("criterionId must be a positive integer");
+		throw new Error("criterionId має бути додатним цілим числом");
 	}
 	if (!allowedOperators.has(operator)) {
-		throw new Error("Invalid operator");
+		throw new Error("Некоректний оператор");
 	}
 	if (!Number.isFinite(conditionValue)) {
-		throw new Error("conditionValue must be numeric");
+		throw new Error("conditionValue має бути числом");
 	}
 	if (!allowedActions.has(actionType)) {
-		throw new Error("Invalid actionType");
+		throw new Error("Некоректний тип дії");
 	}
 	if (!Number.isFinite(actionValue)) {
-		throw new Error("actionValue must be numeric");
+		throw new Error("actionValue має бути числом");
 	}
 
 	return {
@@ -84,7 +84,7 @@ export const rulesService = {
 		const normalized = normalizeRule(rule);
 		const criteria = await criteriaRepository.getAll();
 		if (!criteria.some((c) => c.id === normalized.criterionId)) {
-			throw new Error(`Criterion ${normalized.criterionId} not found`);
+			throw new Error(`Критерій ${normalized.criterionId} не знайдено`);
 		}
 
 		return rulesRepository.create(normalized);
@@ -94,7 +94,7 @@ export const rulesService = {
 		const normalized = normalizeRule(rule);
 		const affectedRows = await rulesRepository.update(id, normalized);
 		if (!affectedRows) {
-			throw new Error("Rule not found");
+			throw new Error("Правило не знайдено");
 		}
 		return { id: Number(id), ...normalized };
 	},

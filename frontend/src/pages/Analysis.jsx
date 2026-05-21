@@ -1,10 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { analysisController } from "@/controllers/analysisController";
+import { useCallback, useEffect, useState } from "react";
+import { analysisService } from "@/services/analysisService";
+
+const methodLabels = {
+	additive: "Адитивний (зважена сума)",
+	cautious: "Обережний (за мінімумом)",
+	multiplicative: "Мультиплікативний (добуток)",
+};
 
 export const AnalysisPage = () => {
 	const [selectedMethod, setSelectedMethod] = useState("additive");
 	const [result, setResult] = useState(null);
 	const [scenarios, setScenarios] = useState([]);
+	const [scenarioResult, setScenarioResult] = useState(null);
 	const [statusMessage, setStatusMessage] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [sensitivityParams, setSensitivityParams] = useState({
@@ -12,25 +19,14 @@ export const AnalysisPage = () => {
 		range: 0.5,
 	});
 
-	const methodLabels = useMemo(
-		() => ({
-			additive: "Additive (weighted sum)",
-			cautious: "Cautious (min-based)",
-			multiplicative: "Multiplicative (product)",
-		}),
-		[],
-	);
-
 	const load = useCallback(async () => {
 		setLoading(true);
 		setStatusMessage("");
 		try {
-			const r = await analysisController.getLastResult();
-			setResult(r);
-			const sc = await analysisController.getScenarios();
+			const sc = await analysisService.getScenarios();
 			setScenarios(sc || []);
 		} catch (err) {
-			setStatusMessage(err.message || "Не вдалося завантажити аналіз");
+			setStatusMessage(err.message || "Не вдалося завантажити сценарії");
 		} finally {
 			setLoading(false);
 		}
@@ -43,7 +39,7 @@ export const AnalysisPage = () => {
 	const handleRun = async () => {
 		setStatusMessage("");
 		try {
-			const res = await analysisController.run(selectedMethod);
+			const res = await analysisService.run(selectedMethod);
 			setResult(res);
 			setStatusMessage("Аналіз виконано");
 		} catch (err) {
@@ -54,9 +50,9 @@ export const AnalysisPage = () => {
 	const handleApplyScenario = async (id) => {
 		setStatusMessage("");
 		try {
-			await analysisController.applyScenario(id);
+			const res = await analysisService.applyScenario(id);
+			setScenarioResult(res);
 			setStatusMessage("Сценарій застосовано");
-			await load();
 		} catch (err) {
 			setStatusMessage(err.message || "Не вдалося застосувати сценарій");
 		}
@@ -65,7 +61,7 @@ export const AnalysisPage = () => {
 	const handleRunSensitivity = async () => {
 		setStatusMessage("");
 		try {
-			const res = await analysisController.runSensitivity(sensitivityParams);
+			const res = await analysisService.runSensitivity(sensitivityParams);
 			setResult((prev) => ({ ...prev, sensitivity: res }));
 			setStatusMessage("Проведено аналіз чутливості");
 		} catch (err) {
@@ -102,7 +98,7 @@ export const AnalysisPage = () => {
 							onChange={(e) => setSelectedMethod(e.target.value)}
 							className="border border-stone-200 rounded-lg px-3 py-2 text-sm bg-white outline-none"
 						>
-							{analysisController.methods.map((m) => (
+							{analysisService.methods.map((m) => (
 								<option key={m} value={m}>
 									{methodLabels[m] || m}
 								</option>
@@ -121,10 +117,55 @@ export const AnalysisPage = () => {
 
 				{result && (
 					<div className="mt-3">
-						<h3 className="text-sm font-medium text-stone-800">Результат</h3>
-						<pre className="overflow-x-auto text-xs text-stone-700 bg-white border border-stone-200 rounded-lg p-3 mt-2">
-							{JSON.stringify(result, null, 2)}
-						</pre>
+						<h3 className="text-sm font-medium text-stone-800">
+							Рейтинг альтернатив
+						</h3>
+						{result?.ranking && Array.isArray(result.ranking) ? (
+							<div className="overflow-x-auto mt-2">
+								<table className="min-w-full border border-stone-200 rounded-lg overflow-hidden text-sm">
+									<thead>
+										<tr className="bg-stone-100">
+											<th className="px-3 py-2 text-left text-stone-700">
+												Місце
+											</th>
+											<th className="px-3 py-2 text-left text-stone-700">
+												Альтернатива
+											</th>
+											<th className="px-3 py-2 text-right text-stone-700">
+												Оцінка
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{result.ranking.map((item, idx) => (
+											<tr
+												key={item.id || idx}
+												className="border-t border-stone-200"
+											>
+												<td className="px-3 py-2 text-stone-800 font-medium">
+													{idx + 1}
+												</td>
+												<td className="px-3 py-2 text-stone-800">
+													{item.name || `Альтернатива ${item.id}`}
+												</td>
+												<td className="px-3 py-2 text-right text-stone-700">
+													{Number(item.score).toFixed(4)}
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+								{result.method && (
+									<p className="text-xs text-stone-600 mt-2">
+										Метод: {methodLabels[result.method] || result.method}
+									</p>
+								)}
+							</div>
+						) : (
+							<pre className="overflow-x-auto text-xs text-stone-700 bg-white border border-stone-200 rounded-lg p-3 mt-2">
+								{JSON.stringify(result, null, 2)}
+							</pre>
+						)}
 					</div>
 				)}
 			</section>
@@ -132,7 +173,7 @@ export const AnalysisPage = () => {
 			<section className="bg-white border border-stone-200 rounded-xl p-4 space-y-4">
 				<h2 className="text-base font-medium text-stone-800">Сценарії</h2>
 				<p className="text-sm text-stone-600">
-					Керування сценаріями (застосувати) — мінімальна реалізація.
+					Аналіз альтернативних сценаріїв (зміна ваг, оцінок або порогів).
 				</p>
 
 				<div className="overflow-x-auto">
@@ -163,7 +204,7 @@ export const AnalysisPage = () => {
 											onClick={() => handleApplyScenario(s.id)}
 											className="text-sm text-blue-500 hover:text-blue-700"
 										>
-											Застосувати
+											Запустити
 										</button>
 									</td>
 								</tr>
@@ -171,6 +212,56 @@ export const AnalysisPage = () => {
 						</tbody>
 					</table>
 				</div>
+
+				{scenarioResult && (
+					<div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+						<h3 className="text-sm font-medium text-blue-900 mb-3">
+							Результат сценарію
+						</h3>
+						{scenarioResult?.ranking &&
+						Array.isArray(scenarioResult.ranking) ? (
+							<div className="overflow-x-auto">
+								<table className="min-w-full border border-blue-200 rounded-lg overflow-hidden text-sm">
+									<thead>
+										<tr className="bg-blue-100">
+											<th className="px-3 py-2 text-left text-blue-900">
+												Місце
+											</th>
+											<th className="px-3 py-2 text-left text-blue-900">
+												Альтернатива
+											</th>
+											<th className="px-3 py-2 text-right text-blue-900">
+												Оцінка
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{scenarioResult.ranking.map((item, idx) => (
+											<tr
+												key={item.id || idx}
+												className="border-t border-blue-100"
+											>
+												<td className="px-3 py-2 text-blue-900 font-medium">
+													{idx + 1}
+												</td>
+												<td className="px-3 py-2 text-blue-900">
+													{item.name || `Альтернатива ${item.id}`}
+												</td>
+												<td className="px-3 py-2 text-right text-blue-700">
+													{Number(item.score).toFixed(4)}
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						) : (
+							<pre className="overflow-x-auto text-xs text-blue-900 bg-white border border-blue-100 rounded-lg p-3">
+								{JSON.stringify(scenarioResult, null, 2)}
+							</pre>
+						)}
+					</div>
+				)}
 			</section>
 
 			<section className="bg-white border border-stone-200 rounded-xl p-4 space-y-4">

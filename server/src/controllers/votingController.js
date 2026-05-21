@@ -9,7 +9,7 @@ export const votingController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to fetch votes", error: error.message });
+				.json({ message: "Не вдалося отримати голоси", error: error.message });
 		}
 	},
 
@@ -65,12 +65,10 @@ export const votingController = {
 
 	importFromGoogle: async (req, res) => {
 		try {
-			const { url, spreadsheetId, gid, createMissing = true } = req.body || {};
+			const { url, createMissing = true } = req.body || {};
 
 			const result = await votingService.importFromGoogle({
 				url,
-				spreadsheetId,
-				gid,
 				createMissing,
 			});
 
@@ -88,7 +86,7 @@ export const votingController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to remove votes", error: error.message });
+				.json({ message: "Не вдалося видалити голоси", error: error.message });
 		}
 	},
 };

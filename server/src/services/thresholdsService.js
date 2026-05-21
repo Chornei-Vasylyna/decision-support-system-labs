@@ -4,7 +4,7 @@ import { thresholdsRepository } from "../repositories/thresholdsRepository.js";
 
 const normalizeThresholds = (thresholds) => {
 	if (!Array.isArray(thresholds) || !thresholds.length) {
-		throw new Error("Thresholds array required and must not be empty");
+		throw new Error("Потрібен масив порогів, і він не може бути порожнім");
 	}
 
 	return thresholds.map((item) => {
@@ -12,11 +12,11 @@ const normalizeThresholds = (thresholds) => {
 		const thresholdValue = Number(item?.thresholdValue);
 
 		if (!Number.isInteger(criterionId) || criterionId <= 0) {
-			throw new Error("criterionId must be a positive integer");
+			throw new Error("criterionId має бути додатним цілим числом");
 		}
 
 		if (!Number.isFinite(thresholdValue)) {
-			throw new Error("thresholdValue must be a number");
+			throw new Error("thresholdValue має бути числом");
 		}
 
 		return { criterionId, thresholdValue };
@@ -33,7 +33,7 @@ export const thresholdsService = {
 
 		for (const item of normalized) {
 			if (!criteriaSet.has(item.criterionId)) {
-				throw new Error(`Criterion ${item.criterionId} not found`);
+				throw new Error(`Критерій ${item.criterionId} не знайдено`);
 			}
 		}
 
@@ -77,7 +77,7 @@ export const thresholdsService = {
 					failedCriteria.push({
 						criterionId,
 						criterionName: threshold.criterionName,
-						reason: "No score",
+						reason: "Немає оцінки",
 					});
 					continue;
 				}

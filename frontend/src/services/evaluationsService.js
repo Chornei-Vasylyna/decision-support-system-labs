@@ -1,23 +1,28 @@
-import { evaluationsApi } from "@/api/evaluationsApi";
+import { API_ENDPOINTS } from "@/constants/api";
+import { getJson, sendJson } from "@/utils/http";
+
+const api = {
+	getMatrix: () => getJson(API_ENDPOINTS.evaluationsMatrix),
+	updateMatrix: (evaluations) =>
+		sendJson(API_ENDPOINTS.evaluationsMatrix, "PUT", { evaluations }),
+	importFromGoogle: (data) =>
+		sendJson(API_ENDPOINTS.evaluationsImport, "POST", data),
+	consensus: (scores, method = "arithmeticMean") =>
+		sendJson(API_ENDPOINTS.evaluationsConsensus, "POST", { scores, method }),
+};
 
 const normalizeImportForm = (form) => ({
 	url: (form?.url || "").trim(),
-	spreadsheetId: (form?.spreadsheetId || "").trim(),
-	gid: (form?.gid || "").toString().trim(),
 	createMissing: Boolean(form?.createMissing),
 });
 
-export const evaluationsController = {
+export const evaluationsService = {
 	validateImport: (form) => {
 		const errors = {};
 		const normalized = normalizeImportForm(form);
 
-		if (!normalized.url && !normalized.spreadsheetId) {
-			errors.url = "Вкажіть URL або spreadsheetId";
-		}
-
-		if (normalized.gid && Number.isNaN(Number(normalized.gid))) {
-			errors.gid = "gid має бути числом";
+		if (!normalized.url) {
+			errors.url = "Вкажіть URL";
 		}
 
 		return errors;
@@ -40,7 +45,7 @@ export const evaluationsController = {
 		return errors;
 	},
 
-	load: async () => evaluationsApi.getMatrix(),
+	load: () => api.getMatrix(),
 
 	saveMatrix: async (matrixData) => {
 		const evaluations = [];
@@ -55,11 +60,13 @@ export const evaluationsController = {
 			}
 		}
 
-		return evaluationsApi.updateMatrix(evaluations);
+		return api.updateMatrix(evaluations);
 	},
 
-	importFromGoogle: async (form) => {
+	importFromGoogle: (form) => {
 		const payload = normalizeImportForm(form);
-		return evaluationsApi.importFromGoogle(payload);
+		return api.importFromGoogle(payload);
 	},
+
+	consensus: (scores, method) => api.consensus(scores, method),
 };

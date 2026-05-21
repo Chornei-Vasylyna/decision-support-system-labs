@@ -9,7 +9,7 @@ export const weightsController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to fetch criteria", error: error.message });
+				.json({ message: "Не вдалося отримати критерії", error: error.message });
 		}
 	},
 

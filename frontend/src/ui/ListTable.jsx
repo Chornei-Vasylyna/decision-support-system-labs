@@ -5,7 +5,7 @@ export const ListTable = ({ headers = [], items = [], renderRow }) => {
 				<thead>
 					<tr className="bg-stone-200/60 border-b border-stone-200">
 						{headers.map((h, idx) => (
-							// biome-ignore lint/suspicious/noArrayIndexKey: re
+							// biome-ignore lint/suspicious/noArrayIndexKey: not critical
 							<th key={idx} className="p-3 text-left text-sm">
 								{h}
 							</th>

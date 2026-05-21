@@ -9,7 +9,7 @@ export const criteriaController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to fetch criteria", error: error.message });
+				.json({ message: "Не вдалося отримати критерії", error: error.message });
 		}
 	},
 
@@ -43,7 +43,7 @@ export const criteriaController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to remove criterion", error: error.message });
+				.json({ message: "Не вдалося видалити критерій", error: error.message });
 		}
 	},
 };

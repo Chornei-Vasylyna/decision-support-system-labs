@@ -5,7 +5,7 @@ const normalizeWeights = (items) => {
 	const total = items.reduce((sum, item) => sum + item.weight, 0);
 
 	if (total <= 0) {
-		throw new Error("Total weight must be greater than zero");
+		throw new Error("Сумарна вага має бути більшою за нуль");
 	}
 
 	return items.map((item) => ({
@@ -56,7 +56,7 @@ const getVotingResult = async (method) => {
 		case "approvalVoting":
 			return votingService.approvalVoting();
 		default:
-			throw new Error("Invalid voting method");
+			throw new Error("Некоректний метод голосування");
 	}
 };
 
@@ -65,7 +65,7 @@ export const weightsService = {
 
 	updateMany: async (criteria) => {
 		if (!Array.isArray(criteria) || !criteria.length) {
-			throw new Error("Criteria array required and must not be empty");
+			throw new Error("Потрібен масив критеріїв, і він не може бути порожнім");
 		}
 
 		const updates = criteria.map((item) => {
@@ -73,11 +73,11 @@ export const weightsService = {
 			const weight = Number(item?.weight);
 
 			if (!Number.isInteger(id) || id <= 0) {
-				throw new Error("Criterion id must be a positive integer");
+				throw new Error("ID критерію має бути додатним цілим числом");
 			}
 
 			if (!Number.isFinite(weight) || weight < 0) {
-				throw new Error("Weight must be a non-negative number");
+				throw new Error("Вага має бути невід'ємним числом");
 			}
 
 			return { id, weight };
@@ -89,7 +89,7 @@ export const weightsService = {
 				item.weight,
 			);
 			if (!affectedRows) {
-				throw new Error(`Criterion ${item.id} not found`);
+				throw new Error(`Критерій ${item.id} не знайдено`);
 			}
 		}
 
@@ -99,7 +99,7 @@ export const weightsService = {
 	applyVotingResults: async (method) => {
 		const votingResult = await getVotingResult(method);
 		if (!votingResult?.ranked?.length) {
-			throw new Error("No voting results available");
+			throw new Error("Немає доступних результатів голосування");
 		}
 
 		const weightedItems = extractScores(votingResult.ranked, method);
@@ -111,7 +111,7 @@ export const weightsService = {
 				item.weight,
 			);
 			if (!affectedRows) {
-				throw new Error(`Criterion ${item.criterionId} not found`);
+				throw new Error(`Критерій ${item.criterionId} не знайдено`);
 			}
 		}
 

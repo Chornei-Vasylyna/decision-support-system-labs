@@ -17,25 +17,22 @@ const extractIdsByName = async () => {
 	return { altByName, critByName };
 };
 
-const buildExportCsvUrl = ({ url, spreadsheetId, gid }) => {
-	if (url) {
-		const mId = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-		const mGid = url.match(/[?&]gid=(\d+)/);
-		const id = mId ? mId[1] : null;
-		const g = mGid ? mGid[1] : gid;
-		if (!id) throw new Error("Cannot parse spreadsheetId from url");
-		return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${g || 0}`;
-	}
+const buildExportCsvUrl = ({ url }) => {
+	if (!url) throw new Error("Потрібне посилання для імпорту");
 
-	if (!spreadsheetId) throw new Error("spreadsheetId or url required");
-	return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid || 0}`;
+	const mId = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+	const mGid = url.match(/[?&]gid=(\d+)/);
+	const id = mId ? mId[1] : null;
+	const g = mGid ? mGid[1] : 0;
+	if (!id) throw new Error("Не вдалося визначити ID аркуша з URL");
+	return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${g}`;
 };
 
 const normalizeScore = (score) => {
 	const numericScore = Number(score);
 
 	if (!Number.isFinite(numericScore)) {
-		throw new Error("Evaluation score must be a number");
+		throw new Error("Оцінка має бути числом");
 	}
 
 	return numericScore;
@@ -47,11 +44,11 @@ const normalizeEvaluationItem = (item) => {
 	const score = normalizeScore(item?.score);
 
 	if (!Number.isInteger(alternativeId) || alternativeId <= 0) {
-		throw new Error("Evaluation alternativeId must be a positive integer");
+		throw new Error("alternativeId оцінки має бути додатним цілим числом");
 	}
 
 	if (!Number.isInteger(criterionId) || criterionId <= 0) {
-		throw new Error("Evaluation criterionId must be a positive integer");
+		throw new Error("criterionId оцінки має бути додатним цілим числом");
 	}
 
 	return { alternativeId, criterionId, score };
@@ -69,11 +66,11 @@ const ensureReferenceExists = async (alternativeId, criterionId) => {
 	);
 
 	if (!alternativeExists) {
-		throw new Error(`Alternative ${alternativeId} not found`);
+		throw new Error(`Альтернативу ${alternativeId} не знайдено`);
 	}
 
 	if (!criterionExists) {
-		throw new Error(`Criterion ${criterionId} not found`);
+		throw new Error(`Критерій ${criterionId} не знайдено`);
 	}
 };
 
@@ -82,7 +79,7 @@ export const evaluationsService = {
 	getMatrix: async () => evaluationsRepository.getMatrix(),
 	upsertMany: async (items) => {
 		if (!Array.isArray(items)) {
-			throw new Error("Evaluations must be an array");
+			throw new Error("Оцінки мають бути масивом");
 		}
 
 		const normalizedItems = items.map(normalizeEvaluationItem);
@@ -95,30 +92,26 @@ export const evaluationsService = {
 	},
 	removeById: async (id) => evaluationsRepository.removeById(id),
 
-	importFromGoogle: async ({
-		url,
-		spreadsheetId,
-		gid,
-		createMissing = true,
-	}) => {
-		const csvUrl = buildExportCsvUrl({ url, spreadsheetId, gid });
+	importFromGoogle: async ({ url, createMissing = true }) => {
+		const csvUrl = buildExportCsvUrl({ url });
 
 		const resp = await fetch(csvUrl);
 		if (!resp.ok) {
 			throw new Error(
-				`Failed to fetch sheet: ${resp.status} ${resp.statusText}`,
+				`Не вдалося отримати аркуш: ${resp.status} ${resp.statusText}`,
 			);
 		}
 
 		const text = await resp.text();
 		const rows = parse(text, { bom: true, skip_empty_lines: true });
 
-		if (!rows.length) throw new Error("Empty sheet");
+		if (!rows.length) throw new Error("Аркуш порожній");
 
 		// header: [ Alternative, crit1, crit2, ... ]
+		console.log(rows);
 		const header = rows[0].map((h) => (h || "").toString().trim());
 		if (header.length < 2)
-			throw new Error("Sheet must have at least one criterion column");
+			throw new Error("Аркуш має містити принаймні один стовпець критерію");
 
 		const criterionNames = header.slice(1).map((h) => h || "");
 
@@ -130,12 +123,12 @@ export const evaluationsService = {
 			const key = cname.trim().toLowerCase();
 			let crit = critByName.get(key);
 			if (!crit) {
-				if (!createMissing) throw new Error(`Criterion not found: ${cname}`);
+				if (!createMissing) throw new Error(`Критерій не знайдено: ${cname}`);
 				crit = await criteriaRepository.create({
 					name: cname,
 					type: "maximize",
 					weight: 1,
-					description: "(imported)",
+					description: "(імпортовано)",
 				});
 				critByName.set(key, crit);
 			}
@@ -154,8 +147,8 @@ export const evaluationsService = {
 			let alt = altByName.get(altKey);
 			if (!alt) {
 				if (!createMissing)
-					throw new Error(`Alternative not found: ${altName}`);
-				alt = await alternativesRepository.create(altName, "(imported)");
+					throw new Error(`Альтернативу не знайдено: ${altName}`);
+				alt = await alternativesRepository.create(altName, "(імпортовано)");
 				altByName.set(altKey, alt);
 			}
 
@@ -178,5 +171,17 @@ export const evaluationsService = {
 		await evaluationsRepository.upsertMany(items);
 
 		return items.length;
+	},
+
+	consensus: async ({ scores, method = "arithmeticMean" }) => {
+		const { consensusService } = await import("./consensusService.js");
+
+		if (!consensusService[method]) {
+			throw new Error(
+				`Невідомий метод узгодження: ${method}. Доступні: arithmeticMean, geometricMean, median`,
+			);
+		}
+
+		return consensusService[method](scores);
 	},
 };

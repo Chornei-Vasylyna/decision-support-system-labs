@@ -2,12 +2,12 @@ export const consensusService = {
 	// Method 1: Arithmetic Mean (algebraic)
 	arithmeticMean: (scores) => {
 		if (!Array.isArray(scores) || !scores.length) {
-			throw new Error("Scores array required and must not be empty");
+			throw new Error("Потрібен масив оцінок, і він не може бути порожнім");
 		}
 
 		const validScores = scores.filter((s) => Number.isFinite(s));
 		if (!validScores.length) {
-			throw new Error("No valid numeric scores provided");
+			throw new Error("Не передано жодної коректної числової оцінки");
 		}
 
 		const sum = validScores.reduce((acc, score) => acc + score, 0);
@@ -18,13 +18,13 @@ export const consensusService = {
 	// Method 2: Geometric Mean
 	geometricMean: (scores) => {
 		if (!Array.isArray(scores) || !scores.length) {
-			throw new Error("Scores array required and must not be empty");
+			throw new Error("Потрібен масив оцінок, і він не може бути порожнім");
 		}
 
 		const validScores = scores.filter((s) => Number.isFinite(s) && s > 0);
 		if (!validScores.length) {
 			throw new Error(
-				"No valid positive numeric scores provided for geometric mean",
+				"Не передано жодної коректної додатної числової оцінки для геометричного середнього",
 			);
 		}
 
@@ -37,7 +37,7 @@ export const consensusService = {
 	// Method 3: Median
 	median: (scores) => {
 		if (!Array.isArray(scores) || !scores.length) {
-			throw new Error("Scores array required and must not be empty");
+			throw new Error("Потрібен масив оцінок, і він не може бути порожнім");
 		}
 
 		const validScores = scores
@@ -45,7 +45,7 @@ export const consensusService = {
 			.sort((a, b) => a - b);
 
 		if (!validScores.length) {
-			throw new Error("No valid numeric scores provided");
+			throw new Error("Не передано жодної коректної числової оцінки");
 		}
 
 		const mid = Math.floor(validScores.length / 2);

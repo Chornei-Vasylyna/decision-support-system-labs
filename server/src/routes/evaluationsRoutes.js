@@ -7,6 +7,7 @@ router.get("/", evaluationsController.getAll);
 router.get("/matrix", evaluationsController.getMatrix);
 router.put("/matrix", evaluationsController.upsertMany);
 router.post("/import-google", evaluationsController.importFromGoogle);
+router.post("/consensus", evaluationsController.consensus);
 router.delete("/:id", evaluationsController.removeById);
 
 export default router;

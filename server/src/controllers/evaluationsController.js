@@ -9,7 +9,7 @@ export const evaluationsController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to fetch evaluations", error: error.message });
+				.json({ message: "Не вдалося отримати оцінки", error: error.message });
 		}
 	},
 
@@ -20,7 +20,7 @@ export const evaluationsController = {
 			res.json(data);
 		} catch (error) {
 			res.status(500).json({
-				message: "Failed to fetch evaluation matrix",
+				message: "Не вдалося отримати матрицю оцінювання",
 				error: error.message,
 			});
 		}
@@ -38,16 +38,32 @@ export const evaluationsController = {
 
 	importFromGoogle: async (req, res) => {
 		try {
-			const { url, spreadsheetId, gid, createMissing = true } = req.body || {};
+			const { url, createMissing = true } = req.body || {};
 
 			const result = await evaluationsService.importFromGoogle({
 				url,
-				spreadsheetId,
-				gid,
 				createMissing,
 			});
 
 			res.status(200).json({ imported: result });
+		} catch (error) {
+			res.status(400).json({ message: error.message });
+		}
+	},
+
+	consensus: async (req, res) => {
+		try {
+			const { scores, method = "arithmeticMean" } = req.body || {};
+
+			if (!Array.isArray(scores) || scores.length === 0) {
+				return res
+					.status(400)
+					.json({ message: "Потрібен масив оцінок, і він не може бути порожнім" });
+			}
+
+			const result = await evaluationsService.consensus({ scores, method });
+
+			res.status(200).json({ result, method, scoresCount: scores.length });
 		} catch (error) {
 			res.status(400).json({ message: error.message });
 		}
@@ -61,7 +77,7 @@ export const evaluationsController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to remove evaluation", error: error.message });
+				.json({ message: "Не вдалося видалити оцінку", error: error.message });
 		}
 	},
 };

@@ -9,7 +9,7 @@ export const thresholdsController = {
 		} catch (error) {
 			res
 				.status(500)
-				.json({ message: "Failed to fetch thresholds", error: error.message });
+				.json({ message: "Не вдалося отримати порогові значення", error: error.message });
 		}
 	},
 

@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { criteriaController } from "@/controllers/criteriaController";
-import { votingController } from "@/controllers/votingController";
+import { criteriaService } from "@/services/criteriaService";
+import { votingService } from "@/services/votingService";
 import { useCriteriaStore } from "@/stores/useCriteriaStore";
 
 const createEmptyImportForm = () => ({
 	url: "",
-	spreadsheetId: "",
-	gid: "",
 	createMissing: true,
 });
 
@@ -24,10 +22,10 @@ export const VotingPage = () => {
 
 	const methodLabels = useMemo(
 		() => ({
-			simpleMajority: "Simple Majority",
-			bordaCount: "Borda Count",
-			condorcet: "Condorcet",
-			approvalVoting: "Approval Voting",
+			simpleMajority: "Проста більшість",
+			bordaCount: "Метод Борда",
+			condorcet: "Кондорсе",
+			approvalVoting: "Відкрите голосування",
 		}),
 		[],
 	);
@@ -37,8 +35,8 @@ export const VotingPage = () => {
 		setStatusMessage("");
 
 		try {
-			await criteriaController.load();
-			const currentVotes = await votingController.loadVotes();
+			await criteriaService.load();
+			const currentVotes = await votingService.loadVotes();
 			setVotes(currentVotes);
 		} catch (error) {
 			setStatusMessage(
@@ -64,7 +62,7 @@ export const VotingPage = () => {
 	const handleImportSubmit = async (event) => {
 		event.preventDefault();
 
-		const errors = votingController.validateImport(importForm);
+		const errors = votingService.validateImport(importForm);
 		setImportErrors(errors);
 		setStatusMessage("");
 
@@ -73,7 +71,7 @@ export const VotingPage = () => {
 		}
 
 		try {
-			await votingController.importFromGoogle(importForm);
+			await votingService.importFromGoogle(importForm);
 			setStatusMessage("Імпорт голосів завершено");
 			setImportForm(createEmptyImportForm());
 			await loadVotingData();
@@ -87,7 +85,7 @@ export const VotingPage = () => {
 		setStatusMessage("");
 
 		try {
-			const result = await votingController.getMethodResult(method);
+			const result = await votingService.getMethodResult(method);
 			setMethodResult({ method, result });
 			setStatusMessage(`Метод ${methodLabels[method] || method} виконано`);
 		} catch (error) {
@@ -101,7 +99,7 @@ export const VotingPage = () => {
 		setStatusMessage("");
 
 		try {
-			await votingController.applyVotingResults(selectedMethod);
+			await votingService.applyVotingResults(selectedMethod);
 			setStatusMessage("Ваги оновлено за результатами голосування");
 			await loadVotingData();
 		} catch (error) {
@@ -119,7 +117,7 @@ export const VotingPage = () => {
 	};
 
 	const handleSaveWeights = async () => {
-		const errors = votingController.validateWeights(
+		const errors = votingService.validateWeights(
 			criteria.map((criterion) => ({
 				...criterion,
 				weight: weightDrafts[criterion.id],
@@ -134,7 +132,7 @@ export const VotingPage = () => {
 		}
 
 		try {
-			await votingController.updateWeights(
+			await votingService.updateWeights(
 				criteria.map((criterion) => ({
 					id: criterion.id,
 					weight: Number(weightDrafts[criterion.id]),
@@ -168,7 +166,7 @@ export const VotingPage = () => {
 						Імпорт голосів з Google Sheets
 					</h2>
 					<p className="text-sm text-stone-600 mt-1">
-						Підтримується URL або spreadsheetId. Відсутні записи можна створити
+						Підтримується посилання на Google Sheets. Відсутні записи можна
 						автоматично.
 					</p>
 				</div>
@@ -186,7 +184,7 @@ export const VotingPage = () => {
 									url: e.target.value,
 								}))
 							}
-							placeholder="Google Sheets URL"
+							placeholder="Посилання на Google Sheets"
 							className={`w-full border rounded-lg px-3 py-2 outline-none transition-colors ${
 								importErrors.url
 									? "border-red-400 focus:border-red-500"
@@ -198,39 +196,7 @@ export const VotingPage = () => {
 						)}
 					</div>
 
-					<input
-						value={importForm.spreadsheetId}
-						onChange={(e) =>
-							setImportForm((current) => ({
-								...current,
-								spreadsheetId: e.target.value,
-							}))
-						}
-						placeholder="Spreadsheet ID (опційно)"
-						className="border border-stone-200 rounded-lg px-3 py-2 outline-none focus:border-stone-400"
-					/>
-
-					<div>
-						<input
-							type="number"
-							value={importForm.gid}
-							onChange={(e) =>
-								setImportForm((current) => ({
-									...current,
-									gid: e.target.value,
-								}))
-							}
-							placeholder="gid (опційно)"
-							className={`w-full border rounded-lg px-3 py-2 outline-none ${
-								importErrors.gid
-									? "border-red-400 focus:border-red-500"
-									: "border-stone-200 focus:border-stone-400"
-							}`}
-						/>
-						{importErrors.gid && (
-							<p className="text-sm text-red-600 mt-1">{importErrors.gid}</p>
-						)}
-					</div>
+					{/* spreadsheetId and gid removed — derived from URL in service */}
 
 					<label className="flex items-center gap-2 text-sm text-stone-700 md:col-span-2">
 						<input
@@ -280,7 +246,7 @@ export const VotingPage = () => {
 							onChange={(e) => setSelectedMethod(e.target.value)}
 							className="border border-stone-200 rounded-lg px-3 py-2 text-sm bg-white outline-none focus:border-stone-400"
 						>
-							{votingController.methods.map((method) => (
+							{votingService.methods.map((method) => (
 								<option key={method} value={method}>
 									{methodLabels[method] || method}
 								</option>
@@ -298,7 +264,7 @@ export const VotingPage = () => {
 				</div>
 
 				<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-					{votingController.methods.map((method) => (
+					{votingService.methods.map((method) => (
 						<button
 							key={method}
 							type="button"

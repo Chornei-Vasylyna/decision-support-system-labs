@@ -4,10 +4,17 @@ export const useResourceList = ({ controller, initialForm = {} } = {}) => {
 	const [form, setForm] = useState(initialForm);
 	const [editId, setEditId] = useState(null);
 	const [errors, setErrors] = useState({});
+	const [items, setItems] = useState([]);
 
 	useEffect(() => {
 		if (controller && typeof controller.load === "function") {
-			controller.load();
+			Promise.resolve(controller.load())
+				.then((data) => {
+					if (Array.isArray(data)) {
+						setItems(data);
+					}
+				})
+				.catch(() => {});
 		}
 	}, [controller]);
 
@@ -38,23 +45,48 @@ export const useResourceList = ({ controller, initialForm = {} } = {}) => {
 			setErrors({});
 		}
 
-		if (editId && typeof controller.update === "function") {
-			await controller.update(editId, form);
-		} else if (typeof controller.create === "function") {
-			await controller.create(form);
-		}
+		try {
+			if (editId && typeof controller.update === "function") {
+				await controller.update(editId, form);
+			} else if (typeof controller.create === "function") {
+				await controller.create(form);
+			}
 
-		resetForm();
+			if (typeof controller.load === "function") {
+				try {
+					const data = await controller.load();
+					if (Array.isArray(data)) {
+						setItems(data);
+					}
+				} catch {}
+			}
+
+			resetForm();
+		} catch (error) {
+			if (error?.message) {
+				setErrors({ submit: error.message });
+			}
+		}
 	};
 
 	const handleRemove = async (id) => {
 		if (!controller || typeof controller.remove !== "function") return;
 		await controller.remove(id);
+
+		if (typeof controller.load === "function") {
+			try {
+				const data = await controller.load();
+				if (Array.isArray(data)) {
+					setItems(data);
+				}
+			} catch {}
+		}
 	};
 
 	return {
 		form,
 		setForm,
+		items,
 		editId,
 		errors,
 		handleEdit,

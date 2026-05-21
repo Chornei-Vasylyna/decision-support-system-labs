@@ -1,16 +1,14 @@
-import { alternativesController } from "@/controllers/alternativesController";
 import useResourceList from "@/hooks/useResourceList";
-import { useAlternativesStore } from "@/stores/useAlternativesStore";
+import { alternativesService } from "@/services/alternativesService";
 import { FormPanel } from "@/ui/FormPanel";
 import { ListTable } from "@/ui/ListTable";
 import { RowActions } from "@/ui/RowActions";
 
 export const AlternativesPage = () => {
-	const { alternatives } = useAlternativesStore();
-
 	const {
 		form,
 		setForm,
+		items: alternatives,
 		handleEdit,
 		handleSubmit,
 		handleRemove,
@@ -18,7 +16,7 @@ export const AlternativesPage = () => {
 		editId,
 		errors,
 	} = useResourceList({
-		controller: alternativesController,
+		controller: alternativesService,
 		initialForm: { name: "", description: "" },
 	});
 
@@ -66,7 +64,7 @@ export const AlternativesPage = () => {
 			</FormPanel>
 
 			<ListTable
-				headers={["ID", "Назва", "Опис"]}
+					headers={["№", "Назва", "Опис"]}
 				items={alternatives}
 				renderRow={(a, index) => (
 					<>

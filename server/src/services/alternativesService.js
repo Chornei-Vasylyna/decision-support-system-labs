@@ -7,7 +7,7 @@ export const alternativesService = {
 
 	create: async (name, description) => {
 		if (!name?.trim()) {
-			throw new Error("Alternative name required");
+			throw new Error("Потрібна назва альтернативи");
 		}
 
 		return await alternativesRepository.create(
@@ -18,11 +18,11 @@ export const alternativesService = {
 
 	update: async (id, name, description) => {
 		if (!id) {
-			throw new Error("Alternative id required");
+			throw new Error("Потрібен ID альтернативи");
 		}
 
 		if (!name?.trim()) {
-			throw new Error("Alternative name required");
+			throw new Error("Потрібна назва альтернативи");
 		}
 
 		const affectedRows = await alternativesRepository.update(
@@ -32,7 +32,7 @@ export const alternativesService = {
 		);
 
 		if (!affectedRows) {
-			throw new Error("Alternative not found");
+			throw new Error("Альтернативу не знайдено");
 		}
 
 		return {

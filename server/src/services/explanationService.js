@@ -119,7 +119,7 @@ export const explanationService = {
 
 		const methodRanking = ranking[selectedMethod] || [];
 		if (!methodRanking.length) {
-			throw new Error("No ranking data available");
+			throw new Error("Немає доступних даних ранжування");
 		}
 
 		const best = methodRanking[0];
@@ -127,7 +127,7 @@ export const explanationService = {
 			(row) => row.alternativeId === best.alternativeId,
 		);
 		const alternativeName =
-			alternativeRow?.alternativeName || `Alternative ${best.alternativeId}`;
+				alternativeRow?.alternativeName || `Альтернатива ${best.alternativeId}`;
 
 		const criterionTrace = buildCriterionTrace({
 			method: selectedMethod,
@@ -167,7 +167,7 @@ export const explanationService = {
 				reasons: excludedByThresholds?.failedCriteria || [],
 			},
 			summary: {
-				message: `Alternative '${alternativeName}' selected by '${selectedMethod}' method based on highest integral score and weighted criterion contributions.`,
+				message: `Альтернативу "${alternativeName}" обрано методом "${selectedMethod}" на основі найвищої інтегральної оцінки та зважених внесків критеріїв.`,
 			},
 		};
 	},
