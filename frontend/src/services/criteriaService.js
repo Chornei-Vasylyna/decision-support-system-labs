@@ -2,15 +2,6 @@ import { API_ENDPOINTS } from "@/constants/api";
 import { useCriteriaStore } from "@/stores/useCriteriaStore";
 import { getJson, sendJson, sendWithoutBody } from "@/utils/http";
 
-// API functions
-const api = {
-	getAll: () => getJson(API_ENDPOINTS.criteria),
-	create: (data) => sendJson(API_ENDPOINTS.criteria, "POST", data),
-	update: (id, data) =>
-		sendJson(`${API_ENDPOINTS.criteria}/${id}`, "PUT", data),
-	remove: (id) => sendWithoutBody(`${API_ENDPOINTS.criteria}/${id}`, "DELETE"),
-};
-
 // Service with validation and store management
 export const criteriaService = {
 	validate: (form) => {
@@ -32,17 +23,18 @@ export const criteriaService = {
 	},
 
 	load: async () => {
-		const data = await api.getAll();
+		const data = await getJson(API_ENDPOINTS.criteria);
 		useCriteriaStore.getState().setCriteria(data);
+		return data;
 	},
 
 	create: async (data) => {
-		const created = await api.create(data);
+		const created = await sendJson(API_ENDPOINTS.criteria, "POST", data);
 		useCriteriaStore.getState().addCriteria(created);
 	},
 
 	update: async (id, data) => {
-		await api.update(id, data);
+		await sendJson(`${API_ENDPOINTS.criteria}/${id}`, "PUT", data);
 		useCriteriaStore.getState().updateCriteria({
 			id,
 			...data,
@@ -50,7 +42,7 @@ export const criteriaService = {
 	},
 
 	remove: async (id) => {
-		await api.remove(id);
+		await sendWithoutBody(`${API_ENDPOINTS.criteria}/${id}`, "DELETE");
 		useCriteriaStore.getState().removeCriteria(id);
 	},
 };

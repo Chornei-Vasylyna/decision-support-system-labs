@@ -1,36 +1,6 @@
 import { API_ENDPOINTS } from "@/constants/api";
 import { getJson, sendJson } from "@/utils/http";
 
-// API functions
-const votingApi = {
-	getAll: () => getJson(API_ENDPOINTS.voting),
-	importFromGoogle: (data) =>
-		sendJson(API_ENDPOINTS.votingImport, "POST", data),
-	getMethodResult: (method) => {
-		const methodRoutes = {
-			simpleMajority: "simple-majority",
-			bordaCount: "borda-count",
-			condorcet: "condorcet",
-			approvalVoting: "approval",
-		};
-
-		const route = methodRoutes[method];
-		if (!route) {
-			throw new Error(`Unsupported voting method: ${method}`);
-		}
-
-		return getJson(`${API_ENDPOINTS.votingMethods}/${route}`);
-	},
-};
-
-const weightsApi = {
-	getAll: () => getJson(API_ENDPOINTS.weights),
-	updateMany: (criteria) =>
-		sendJson(API_ENDPOINTS.weights, "PATCH", { criteria }),
-	applyVotingResults: (method) =>
-		sendJson(API_ENDPOINTS.weightsApplyVoting, "POST", { method }),
-};
-
 // Validation constants
 const VOTING_METHODS = [
 	"simpleMajority",
@@ -66,13 +36,30 @@ export const votingService = {
 		return errors;
 	},
 
-	loadVotes: () => votingApi.getAll(),
+	loadVotes: () => getJson(API_ENDPOINTS.voting),
 
-	importFromGoogle: (form) => votingApi.importFromGoogle(form),
+	importFromGoogle: (form) =>
+		sendJson(API_ENDPOINTS.votingImport, "POST", form),
 
-	getMethodResult: (method) => votingApi.getMethodResult(method),
+	getMethodResult: (method) => {
+		const methodRoutes = {
+			simpleMajority: "simple-majority",
+			bordaCount: "borda-count",
+			condorcet: "condorcet",
+			approvalVoting: "approval",
+		};
 
-	updateWeights: (criteria) => weightsApi.updateMany(criteria),
+		const route = methodRoutes[method];
+		if (!route) {
+			throw new Error(`Unsupported voting method: ${method}`);
+		}
 
-	applyVotingResults: (method) => weightsApi.applyVotingResults(method),
+		return getJson(`${API_ENDPOINTS.votingMethods}/${route}`);
+	},
+
+	updateWeights: (criteria) =>
+		sendJson(API_ENDPOINTS.weights, "PATCH", { criteria }),
+
+	applyVotingResults: (method) =>
+		sendJson(API_ENDPOINTS.weightsApplyVoting, "POST", { method }),
 };

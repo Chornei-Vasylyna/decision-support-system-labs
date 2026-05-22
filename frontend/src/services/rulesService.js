@@ -1,15 +1,6 @@
 import { API_ENDPOINTS } from "@/constants/api";
 import { getJson, sendJson, sendWithoutBody } from "@/utils/http";
 
-// API functions
-const api = {
-	getAll: () => getJson(API_ENDPOINTS.rules),
-	create: (data) => sendJson(API_ENDPOINTS.rules, "POST", data),
-	update: (id, data) => sendJson(`${API_ENDPOINTS.rules}/${id}`, "PUT", data),
-	remove: (id) => sendWithoutBody(`${API_ENDPOINTS.rules}/${id}`, "DELETE"),
-	apply: () => sendJson(`${API_ENDPOINTS.rules}/apply`, "POST", {}),
-};
-
 // Validation constants
 const ALLOWED_OPERATORS = [">", ">=", "<", "<=", "==", "!="];
 const ALLOWED_ACTIONS = ["adjust_percent", "set_score", "exclude_alternative"];
@@ -46,13 +37,13 @@ export const rulesService = {
 		return errors;
 	},
 
-	load: () => api.getAll(),
+	load: () => getJson(API_ENDPOINTS.rules),
 
-	create: (data) => api.create(data),
+	create: (data) => sendJson(API_ENDPOINTS.rules, "POST", data),
 
-	update: (id, data) => api.update(id, data),
+	update: (id, data) => sendJson(`${API_ENDPOINTS.rules}/${id}`, "PUT", data),
 
-	remove: (id) => api.remove(id),
+	remove: (id) => sendWithoutBody(`${API_ENDPOINTS.rules}/${id}`, "DELETE"),
 
-	runEngine: () => api.apply(),
+	runEngine: () => sendJson(`${API_ENDPOINTS.rules}/apply`, "POST", {}),
 };

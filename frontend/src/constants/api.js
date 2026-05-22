@@ -13,7 +13,7 @@ export const API_ENDPOINTS = {
 	weightsApplyVoting: `${API_BASE_URL}/weights/apply-voting`,
 	analysisRanking: `${API_BASE_URL}/analysis/ranking`,
 	scenarios: `${API_BASE_URL}/scenarios`,
-	sensitivity: `${API_BASE_URL}/sensitivity`,
+	sensitivity: `${API_BASE_URL}/sensitivity/weights`,
 	rules: `${API_BASE_URL}/rules`,
 	thresholds: `${API_BASE_URL}/thresholds`,
 	thresholdsFeasible: `${API_BASE_URL}/thresholds/feasible`,

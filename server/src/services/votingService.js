@@ -137,15 +137,30 @@ export const votingService = {
 
 			// Use hash of voter name as voterId
 			const voterId = hashString(voterName);
+			const scoredCriteria = [];
 
 			for (let c = 0; c < criteriaIdList.length; c++) {
 				const cell = (row[c + 1] || "").toString().trim();
 				if (cell === "") continue; // skip empties
-				const rank = Number(cell.replace(",", "."));
-				if (!Number.isInteger(rank) || rank <= 0) continue;
+				const score = Number(cell.replace(",", "."));
+				if (!Number.isFinite(score)) continue;
 
-				items.push({ voterId, criterionId: criteriaIdList[c], rank });
+				scoredCriteria.push({
+					criterionId: criteriaIdList[c],
+					score,
+					order: c,
+				});
 			}
+
+			scoredCriteria
+				.sort((a, b) => b.score - a.score || a.order - b.order)
+				.forEach((item, index) => {
+					items.push({
+						voterId,
+						criterionId: item.criterionId,
+						rank: index + 1,
+					});
+				});
 		}
 
 		if (!items.length) return 0;

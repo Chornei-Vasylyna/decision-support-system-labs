@@ -1,18 +1,6 @@
 import { evaluationsService } from "../services/evaluationsService.js";
 
 export const evaluationsController = {
-	getAll: async (_, res) => {
-		try {
-			const data = await evaluationsService.getAll();
-
-			res.json(data);
-		} catch (error) {
-			res
-				.status(500)
-				.json({ message: "Не вдалося отримати оцінки", error: error.message });
-		}
-	},
-
 	getMatrix: async (_, res) => {
 		try {
 			const data = await evaluationsService.getMatrix();
@@ -58,7 +46,9 @@ export const evaluationsController = {
 			if (!Array.isArray(scores) || scores.length === 0) {
 				return res
 					.status(400)
-					.json({ message: "Потрібен масив оцінок, і він не може бути порожнім" });
+					.json({
+						message: "Потрібен масив оцінок, і він не може бути порожнім",
+					});
 			}
 
 			const result = await evaluationsService.consensus({ scores, method });

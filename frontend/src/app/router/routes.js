@@ -1,13 +1,12 @@
 import { redirect } from "react-router";
 import { AlternativesPage } from "@/pages/Alternatives";
-import { AnalysisPage } from "@/pages/Analysis";
+import { AnalysisPage } from "@/pages/Analysis/Analysis";
 import { ConstraintsPage } from "@/pages/Constraints";
 import { CriteriaPage } from "@/pages/Criteria";
-import { DecisionEnginePage } from "@/pages/DecisionEngine";
 import { ExplanationPage } from "@/pages/Explanation";
 import { Layout } from "@/pages/Layout";
 import { MatrixPage } from "@/pages/Matrix";
-import { RulesPage } from "@/pages/Rules";
+import { RulesPage } from "@/pages/Rules/Rules";
 import { VotingPage } from "@/pages/Voting";
 
 export const routes = [
@@ -34,10 +33,6 @@ export const routes = [
 			{
 				path: "voting",
 				Component: VotingPage,
-			},
-			{
-				path: "engine",
-				Component: DecisionEnginePage,
 			},
 			{
 				path: "constraints",

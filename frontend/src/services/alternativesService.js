@@ -1,15 +1,6 @@
 import { API_ENDPOINTS } from "@/constants/api";
 import { getJson, sendJson, sendWithoutBody } from "@/utils/http";
 
-const api = {
-	getAll: () => getJson(API_ENDPOINTS.alternatives),
-	create: (data) => sendJson(API_ENDPOINTS.alternatives, "POST", data),
-	update: (id, data) =>
-		sendJson(`${API_ENDPOINTS.alternatives}/${id}`, "PUT", data),
-	remove: (id) =>
-		sendWithoutBody(`${API_ENDPOINTS.alternatives}/${id}`, "DELETE"),
-};
-
 export const alternativesService = {
 	validate: (form) => {
 		const errors = {};
@@ -21,19 +12,13 @@ export const alternativesService = {
 		return errors;
 	},
 
-	load: async () => {
-		return api.getAll();
-	},
+	load: () => getJson(API_ENDPOINTS.alternatives),
 
-	create: async (payload) => {
-		return api.create(payload);
-	},
+	create: (payload) => sendJson(API_ENDPOINTS.alternatives, "POST", payload),
 
-	update: async (id, payload) => {
-		return api.update(id, payload);
-	},
+	update: (id, payload) =>
+		sendJson(`${API_ENDPOINTS.alternatives}/${id}`, "PUT", payload),
 
-	remove: async (id) => {
-		return api.remove(id);
-	},
+	remove: (id) =>
+		sendWithoutBody(`${API_ENDPOINTS.alternatives}/${id}`, "DELETE"),
 };

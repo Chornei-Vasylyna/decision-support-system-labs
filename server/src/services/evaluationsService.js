@@ -75,7 +75,6 @@ const ensureReferenceExists = async (alternativeId, criterionId) => {
 };
 
 export const evaluationsService = {
-	getAll: async () => evaluationsRepository.getAll(),
 	getMatrix: async () => evaluationsRepository.getMatrix(),
 	upsertMany: async (items) => {
 		if (!Array.isArray(items)) {
@@ -108,7 +107,6 @@ export const evaluationsService = {
 		if (!rows.length) throw new Error("Аркуш порожній");
 
 		// header: [ Alternative, crit1, crit2, ... ]
-		console.log(rows);
 		const header = rows[0].map((h) => (h || "").toString().trim());
 		if (header.length < 2)
 			throw new Error("Аркуш має містити принаймні один стовпець критерію");

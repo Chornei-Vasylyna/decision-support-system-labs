@@ -21,7 +21,6 @@ export const Layout = () => {
 					<Tab to="/criteria" label="Критерії" />
 					<Tab to="/matrix" label="Матриця" />
 					<Tab to="/voting" label="Голосування" />
-					<Tab to="/engine" label="Система прийняття рішень" />
 					<Tab to="/constraints" label="Обмеження" />
 					<Tab to="/rules" label="Правила" />
 					<Tab to="/analysis" label="Аналіз" />

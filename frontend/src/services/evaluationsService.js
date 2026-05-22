@@ -1,16 +1,6 @@
 import { API_ENDPOINTS } from "@/constants/api";
 import { getJson, sendJson } from "@/utils/http";
 
-const api = {
-	getMatrix: () => getJson(API_ENDPOINTS.evaluationsMatrix),
-	updateMatrix: (evaluations) =>
-		sendJson(API_ENDPOINTS.evaluationsMatrix, "PUT", { evaluations }),
-	importFromGoogle: (data) =>
-		sendJson(API_ENDPOINTS.evaluationsImport, "POST", data),
-	consensus: (scores, method = "arithmeticMean") =>
-		sendJson(API_ENDPOINTS.evaluationsConsensus, "POST", { scores, method }),
-};
-
 const normalizeImportForm = (form) => ({
 	url: (form?.url || "").trim(),
 	createMissing: Boolean(form?.createMissing),
@@ -45,7 +35,7 @@ export const evaluationsService = {
 		return errors;
 	},
 
-	load: () => api.getMatrix(),
+	load: () => getJson(API_ENDPOINTS.evaluationsMatrix),
 
 	saveMatrix: async (matrixData) => {
 		const evaluations = [];
@@ -60,13 +50,14 @@ export const evaluationsService = {
 			}
 		}
 
-		return api.updateMatrix(evaluations);
+		return sendJson(API_ENDPOINTS.evaluationsMatrix, "PUT", { evaluations });
 	},
 
 	importFromGoogle: (form) => {
 		const payload = normalizeImportForm(form);
-		return api.importFromGoogle(payload);
+		return sendJson(API_ENDPOINTS.evaluationsImport, "POST", payload);
 	},
 
-	consensus: (scores, method) => api.consensus(scores, method),
+	consensus: (scores, method = "arithmeticMean") =>
+		sendJson(API_ENDPOINTS.evaluationsConsensus, "POST", { scores, method }),
 };
